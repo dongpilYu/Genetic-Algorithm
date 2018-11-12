@@ -5,18 +5,22 @@
 //  Created by jazz4rabbit on 11/9/18.
 //
 
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+//#include "ga.h"
+
 #include "simulation.h"
 
-
-void simple_simulation(const int data[M][K], double (&time)[S])
+void sim::simple_simulation(const int data[M][K], double (&time)[S])
 {
-    for (int i=0; i<S; ++i) {
+    for (int i=0; i< S; ++i) {
         auto target = static_cast<double>(SCENARIO[i]) / 3;
-        auto oil_per_h = static_cast<double>(data[i][0])*alpha*beta;
+        auto oil_per_h = static_cast<double>(data[0][i])*sim::alpha*sim::beta;
 
-		std::cout << oil_per_h << std::endl;
+		//std::cout << oil_per_h << std::endl;
         if (oil_per_h == 0) {
-            time[i] = numeric_limits<double>::infinity();
+            time[i] = std::numeric_limits<double>::infinity();
             continue;
         }
         int t = 0;

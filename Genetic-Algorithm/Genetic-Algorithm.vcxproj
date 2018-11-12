@@ -21,9 +21,12 @@
   <ItemGroup>
     <ClCompile Include="ga.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="simulation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ga.h" />
+    <ClInclude Include="ga_parameters.h" />
+    <ClInclude Include="simulation.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="damage_input.txt" />
