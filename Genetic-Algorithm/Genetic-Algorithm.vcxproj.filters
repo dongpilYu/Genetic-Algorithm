@@ -13,5 +13,44 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="리소스 파일\Inputs">
+      <UniqueIdentifier>{5c09ebe1-2c24-480c-9195-1023de6898dc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ga.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="damage_input.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
+    <Text Include="input_test.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
+    <Text Include="input0.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
+    <Text Include="input1.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
+    <Text Include="input2.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
+    <Text Include="input3.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
+    <Text Include="input4.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ga.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
