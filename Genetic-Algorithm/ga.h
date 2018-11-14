@@ -21,9 +21,8 @@ extern double sum_avg_fiteness[GENERATIONS];
 extern double gene_best_fitness[ITERATION][GENERATIONS];
 extern int iteration_num;
 extern double random_gene_best_fitness[ITERATION];
-//extern double sum_avg_fiteness[GENERATIONS];
 void set_input_parameters();
-
+void previous_assignment_eval();
 
 class Chromosome
 {
@@ -37,7 +36,6 @@ public:
 	int get_data(int row, int col) { return data[row][col]; }
 	void put_data(int row, int col, int val) { data[row][col] = val; }
 	double get_fitness() { return fitness; }
-
 	void simple_simulation(const int data[M][K], double(&time)[S]);
 private:
 	int data[M][K];

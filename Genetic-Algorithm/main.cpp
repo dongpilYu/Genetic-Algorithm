@@ -1,6 +1,6 @@
 #include "ga.h"
 
-//#include "simulation.h"
+#include "simulation.h"
 
 int main()
 {
@@ -21,7 +21,7 @@ int main()
 	cout << "<------------Result------------>" << endl;
 	
 
-	/*
+/*	
 	for (int i = 0; i < GENERATIONS ; i++)
 	{
 		avg_best_fiteness[i] = sum_best_fiteness[i] / ITERATION;
@@ -30,8 +30,8 @@ int main()
 			cout << avg_best_fiteness[i] << " " << sum_avg_fiteness[i] / ITERATION << endl;
 		}
 	}
-	*/
-/*
+*/	
+
 	for (int i = 0; i < GENERATIONS; i++)
 	{
 		avg_best_fiteness[i] = sum_best_fiteness[i] / ITERATION;
@@ -41,21 +41,20 @@ int main()
 		}
 		std_best_fiteness[i] = sqrt(var_best_fiteness[i]);
 
-		if ((i == 0) || (i % 10000 == 0) || (i == GENERATIONS - 1))
+		if ((i == 0) || (i % 100 == 0) || (i == GENERATIONS - 1))
 		{
 			cout << avg_best_fiteness[i] << " " << std_best_fiteness[i] << endl;
 		}
 	}
 
-	int temp;
-	cin >> temp;
-	*/
+	previous_assignment_eval();
 
 	//Random
+	/*
 	cout.setf(ios::fixed);
 	cout.precision(6);
 	int random_avg_best_fitness = sum_best_fiteness[0] / ITERATION;
-	/*
+	
 	int random_var_best_fitness = 0;
 	int random_std_best_fitness = 0;
 
@@ -66,11 +65,13 @@ int main()
 	random_std_best_fitness = sqrt(random_var_best_fitness);
 
 	cout << random_avg_best_fitness << " " << random_std_best_fitness << endl;
-*/
+
 	for (int i = 0; i < ITERATION; i++)
 	{
 		cout << random_gene_best_fitness[i] << endl;
 	}
 	int temp;
-	cin >> temp;
+	cin >> temp;*/
 }
+
+

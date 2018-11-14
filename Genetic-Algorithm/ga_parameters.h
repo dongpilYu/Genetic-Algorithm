@@ -14,6 +14,6 @@ const int FLAG_SHORTAGE = 0, FLAG_SAME = 1, FLAG_EXCESS = 2;
 const int NON_ESCAPABLE = 0, ESCAPABLE = 1;
 const double CROSSOVER_RATE = 0.7;
 const double MUTATION_RATE = 0.001;
-static const int GENERATIONS = 200;
+static const int GENERATIONS = 1000;
 
 #endif 

@@ -298,6 +298,7 @@ void Chromosome::assert_feasible(int mode)
 	}
 }
 
+
 /*
 Post: Evaluate the created GA
 */
@@ -331,25 +332,22 @@ void Chromosome::evaluate() //It's a temporary code, and we'll have to fix it la
 	*/
 	int weight = 1;
 	double time[S];
+
 	simple_simulation(data, time);
 	
 	
 	for (int i = 0; i<K; ++i) {
 		//std::cout <<"time: " << time[i] << ',';
 		double prod = 1;
-		if (time[i] <= 24) //1일 내에 끝나는 경우
+		if (time[i] <= 72) //3일 내에 끝나는 경우
 		{
 			weight = 1;
-		}
-		else if ((time[i] > 24)&&(time[i] <= TIME_LIMIT)) //2-3일 내에 끝나는 경우
-		{
-			weight = 2;
 		}
 		else // 3일 넘게 걸리는 경우
 		{
 			weight = 3;
 		}
-		prod = SCENARIO[i] * time[i] * weight; 
+		prod = SCENARIO[i] * time[i]/24 * weight; 
 		eval_sum += prod;
 	}
 	fitness = eval_sum / 165650;
@@ -694,4 +692,40 @@ void Population::statistics_info_calc()
 
 
 	//cout << "Calculation" << endl;
+}
+
+
+//유전알고리즘과의 비교를 위한 이전 배치의 평가 결과
+void previous_assignment_eval()
+{
+	int test_data[M][K] = { 0, };
+	double time[S];
+	double weight = 1;
+	double previous_fitness = 1.0;
+	double eval_sum = 0;
+
+	for (int i = 0; i < K; i++)
+	{
+		test_data[0][i] = C[i];
+		cout << C[i] << endl;
+	}
+	sim::simple_simulation(test_data, time);
+
+	for (int i = 0; i<K; ++i) {
+		//std::cout <<"time: " << time[i] << ',';
+		double prod = 1;
+		if (time[i] <= 72) //3일 내에 끝나는 경우
+		{
+			weight = 1;
+		}
+		else // 3일 넘게 걸리는 경우
+		{
+			weight = 3;
+		}
+		prod = sim::SCENARIO[i] * time[i] / 24 * weight;
+		eval_sum += prod;
+	}
+	previous_fitness = eval_sum / 165650;
+
+	cout << "previous assignment's fitness is: " << previous_fitness << endl;
 }
