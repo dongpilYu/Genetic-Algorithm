@@ -61,12 +61,7 @@ void sim::simple_simulation(const int data[M][K], double (&time)[S])
             t++;
         }
 
-        int q = t / 8;
-        int r = t % 8;
-
-        // 하루의 일할 수 있는 시간이 8시간이기 때문에
-        // 일한 시간이 9시간인 경우, (9/8)*24 + 9%8 로 계산
-        time[i] = r != 0 ? q*24 + r : q*24 - 16;
+        time[i] = t;
     }
     return ;
 }
@@ -78,7 +73,7 @@ void sim::simulation(const int data[M][K], double(&time)[S])
 	using util::D2T;
 
 	int tick_count;
-	auto T = D2T(constant::D, 5);
+	auto T = D2T(constant::D, constant::ship_speed);
 
 	for (size_t i = 0; i < S; i++)
 	{
@@ -105,7 +100,6 @@ void sim::simulation(const int data[M][K], double(&time)[S])
 			}
 		}
 	}
-
 
 	return;
 }
