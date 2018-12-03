@@ -6,6 +6,7 @@
 #include <vector>
 #include <cassert>
 #include <cmath>
+#include <time.h>
 
 #include "ga_parameters.h"
 
@@ -21,8 +22,9 @@ extern double sum_avg_fiteness[GENERATIONS];
 extern double gene_best_fitness[ITERATION][GENERATIONS];
 extern int iteration_num;
 extern double random_gene_best_fitness[ITERATION];
+extern int assignment[K];
 void set_input_parameters();
-void previous_assignment_eval();
+void assignment_eval(int assignment[K]);
 
 class Chromosome
 {
@@ -41,6 +43,8 @@ private:
 	int data[M][K];
 	double column_sum[K], row_sum[M];
 	double fitness;
+	double weight_fitness;
+	double region_time[K];
 	void cumulative_sum_calc();
 };
 
@@ -53,6 +57,7 @@ public:
 	void run();
 	void statistics_info_calc();
 	void print_population(int mode);
+	void print_best_assignment();
 	double get_best_fitness() { return best_fitness; }
 	double get_avg_fitness() { return avg_fitness; }
 	Chromosome& get_best_chromosome() { return individual[best_index]; }

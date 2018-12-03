@@ -7,6 +7,7 @@ double sum_best_fiteness[GENERATIONS] = { 0, };
 double sum_avg_fiteness[GENERATIONS] = { 0, };
 double gene_best_fitness[ITERATION][GENERATIONS] = { 0, };
 double random_gene_best_fitness[ITERATION] = { 0, };
+int assignment[K] = { 0, };
 int iteration_num = 0;
 
 int SCENARIO[S] = {
@@ -21,12 +22,22 @@ Post: Randomly generates data within range
 */
 Chromosome::Chromosome()
 {
+	int rand_binary;
+
 	for (int row = 0; row < M; row++) {
 		for (int col = 0; col < K; col++)
 		{
-			data[row][col] = (rand() % ((int)(2 * (double)R[row] / K) - LB + 1)) + LB;
-			//data[row][col] = (rand() % ((int)((double)R[row] / K) - LB + 1)) + LB;
-
+			//data[row][col] = (rand() % ((int)(2 * (double)R[row] / K) - LB + 1)) + LB;
+			//data[row][col] = C[col] + rand() % (int)(C[col] * RAND_PERCENTAGE);
+			rand_binary = rand() % 2;
+			if (rand_binary == 0)
+			{
+				data[row][col] = C[col] + rand() % (int)(C[col] * RAND_PERCENTAGE);
+			}
+			else
+			{
+				data[row][col] = C[col] - rand() % (int)(C[col] * RAND_PERCENTAGE);
+			}
 		}
 	}
 	cumulative_sum_calc();
@@ -134,7 +145,7 @@ void Chromosome::repair()
 			{
 				int rand_row = rand() % K;
 
-				if (data[row][rand_row] > LB)
+				if (data[row][rand_row] > MIN_ASN)
 				{
 					data[row][rand_row]--;
 				}
@@ -143,8 +154,29 @@ void Chromosome::repair()
 		}
 	}
 	assert_feasible(MODE_R_ERROR);
+
 	//print_chromo();
 	//cout << "Constraint R is done" << endl;
+
+	/*max constraint*/
+	for (int col = 0; col < K; col++)
+	{
+		if (data[0][col] > MAX_ASN)
+		{
+			int excess_value = 0;
+			excess_value = (data[0][col] - MAX_ASN) / (K - 1);
+			
+			for (int i = 0; i < col; i++)
+			{
+				data[0][i] += excess_value;
+			}
+			data[0][col] = MAX_ASN;
+			for (int i = col+1; i < K; i++)
+			{
+				data[0][i] += excess_value;
+			}
+		}
+	}
 
 	/* Constraint C */
 	/*
@@ -171,10 +203,10 @@ void Chromosome::repair()
 			cout << "\n";
 			break;
 		}
-		for (int col = 0; col < K; col++) //flag check
+		for (int col = 0; col < K; col++) //flag check, 원래는 MAX_ASN이 C[col]
 		{
-			if (column_sum[col] > C[col]) flag_arr[col] = FLAG_EXCESS;
-			else if (column_sum[col] < C[col]) flag_arr[col] = FLAG_SHORTAGE;
+			if (column_sum[col] > MAX_ASN) flag_arr[col] = FLAG_EXCESS;
+			else if (column_sum[col] < MAX_ASN) flag_arr[col] = FLAG_SHORTAGE;
 			else flag_arr[col] = FLAG_SAME;
 		}
 
@@ -264,7 +296,7 @@ void Chromosome::assert_feasible(int mode)
 	for (int row = 0; row < M; row++) {
 		for (int col = 0; col < K; col++)
 		{
-			if (data[row][col] < LB)
+			if (data[row][col] < MIN_ASN) //원래는 LB였음
 			{
 				//cout << "Repaired less than LB" << endl;
 				data[row][col]++;
@@ -273,11 +305,11 @@ void Chromosome::assert_feasible(int mode)
 			}
 		}
 	}
-	if (mode == MODE_C_ERROR) //col
+	if (mode == MODE_C_ERROR) //col, MAX_ASN이 원래는 C[col]
 	{
 		for (int col = 0; col < K; col++)
 		{
-			if (column_sum[col] > C[col])
+			if (column_sum[col] > MAX_ASN)
 			{
 				cout << "Repair Error in constraint C" << endl;
 				//repair();
@@ -305,6 +337,7 @@ Post: Evaluate the created GA
 void Chromosome::evaluate() //It's a temporary code, and we'll have to fix it later
 {
 	double eval_sum = 0;
+	double eval_basic_sum = 0;
 	//double damage[K] = { 0, };
 
 	cumulative_sum_calc();
@@ -330,28 +363,42 @@ void Chromosome::evaluate() //It's a temporary code, and we'll have to fix it la
 
 	fitness = eval_sum;
 	*/
+	
+	for (int i = 0; i < K; i++)
+	{
+		assignment[i] = data[0][i];
+	}
+	
 	int weight = 1;
 	double time[S];
 
-	simple_simulation(data, time);
+	sim::simulation(data, time);
 	
 	
 	for (int i = 0; i<K; ++i) {
 		//std::cout <<"time: " << time[i] << ',';
 		double prod = 1;
-		if (time[i] <= 72) //3일 내에 끝나는 경우
+		double basic_prod = 1;
+		if (time[i] < 2) //2일 내에 끝나는 경우
 		{
-			weight = 1;
+			weight = PENALTY_1DAY;
+		}
+		else if (time[i] >= 2 && time[i] < 3) //2~3일
+		{
+			weight = PENALTY_2DAY;
 		}
 		else // 3일 넘게 걸리는 경우
 		{
-			weight = 3;
+			weight = PENALTY_EXCESS;
 		}
-		prod = SCENARIO[i] * time[i]/24 * weight; 
+		prod = SCENARIO[i] * time[i] * weight;
+		basic_prod = SCENARIO[i] * time[i];
 		eval_sum += prod;
+		eval_basic_sum += basic_prod;
+		//cout << i << " : " << time[i] << endl;
 	}
 	fitness = eval_sum / 165650;
-
+	
 	//std::cout << std::endl; 
 	
 
@@ -414,12 +461,11 @@ void Population::run()
 		sum_best_fiteness[i] += get_best_fitness();
 		sum_avg_fiteness[i] += get_avg_fitness();
 		gene_best_fitness[iteration_num][i] = get_best_fitness();
-		
 		//random
 		random_gene_best_fitness[iteration_num] = get_best_fitness();
 	}
 	iteration_num++;
-	offspring.print_chromo();
+	//offspring.print_chromo();
 	cout << "run() End" << endl;
 }
 
@@ -593,6 +639,23 @@ void Population::replacement(int parent1, int parent2)
 	//cout << "Replacement" << endl;
 }
 
+void Population::print_best_assignment()
+{
+	int assignment[K] = { 0, };
+	cout << "best assinment" << endl;
+		for (int row = 0; row < M; row++) {
+			for (int col = 0; col < K; col++)
+			{
+				//cout.width(K);
+				cout << setw(3) << individual[best_index].get_data(row, col) << endl;
+				assignment[col] = individual[best_index].get_data(row, col);
+			}
+			//cout << "\n";
+		}
+	//cout << "\n";
+		assignment_eval(assignment);
+}
+
 /*
 Pre: Enter data used as a constraint in file format
 Post: Parameters used as constraints are set
@@ -690,42 +753,52 @@ void Population::statistics_info_calc()
 	avg_fitness = sum_of_fitness / POP_SIZE;
 
 
-
 	//cout << "Calculation" << endl;
 }
 
 
-//유전알고리즘과의 비교를 위한 이전 배치의 평가 결과
-void previous_assignment_eval()
+//배치의 평가 결과
+void assignment_eval(int assignment[K])
 {
 	int test_data[M][K] = { 0, };
 	double time[S];
 	double weight = 1;
-	double previous_fitness = 1.0;
-	double eval_sum = 0;
+	double basic_fitness = 1.0;
+	double time_weight_fitness = 1.0;
+	double eval_basic_sum = 0;
+	double eval_weight_sum = 0;
 
 	for (int i = 0; i < K; i++)
 	{
-		test_data[0][i] = C[i];
-		cout << C[i] << endl;
+		test_data[0][i] = assignment[i];
+		//cout << C[i] << endl;
 	}
-	sim::simple_simulation(test_data, time);
+	sim::simulation(test_data, time);
 
 	for (int i = 0; i<K; ++i) {
 		//std::cout <<"time: " << time[i] << ',';
-		double prod = 1;
-		if (time[i] <= 72) //3일 내에 끝나는 경우
+		double basic_prod = 1;
+		double weight_prod = 1;
+		if (time[i] < 2) //2일 내에 끝나는 경우
 		{
-			weight = 1;
+			weight = PENALTY_1DAY;
+		}
+		else if (time[i] >= 2 && time[i] < 3) //2~3일
+		{
+			weight = PENALTY_2DAY;
 		}
 		else // 3일 넘게 걸리는 경우
 		{
-			weight = 3;
+			weight = PENALTY_EXCESS;
 		}
-		prod = sim::SCENARIO[i] * time[i] / 24 * weight;
-		eval_sum += prod;
-	}
-	previous_fitness = eval_sum / 165650;
+		basic_prod = sim::SCENARIO[i] * time[i];
+		weight_prod = sim::SCENARIO[i] * time[i] * weight;
 
-	cout << "previous assignment's fitness is: " << previous_fitness << endl;
+		eval_basic_sum += basic_prod;
+		eval_weight_sum += weight_prod;
+		cout << time[i] << endl;
+	}
+	basic_fitness = eval_basic_sum / 165650;
+	time_weight_fitness = eval_weight_sum / 165650;
+	cout << "assignment's fitness is: " << basic_fitness << " " << time_weight_fitness << endl;
 }

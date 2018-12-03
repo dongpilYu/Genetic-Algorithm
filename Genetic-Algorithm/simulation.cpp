@@ -61,7 +61,7 @@ void sim::simple_simulation(const int data[M][K], double (&time)[S])
             t++;
         }
 
-        time[i] = t;
+        time[i] = t/8.0;
     }
     return ;
 }

@@ -1,9 +1,12 @@
 #include "ga.h"
-
 #include "simulation.h"
 
 int main()
 {
+	/*요기*/
+	clock_t begin, end;
+	begin = clock();
+
 	double avg_best_fiteness[GENERATIONS] = { 0, };
 	double std_best_fiteness[GENERATIONS] = { 0, };
 	double var_best_fiteness[GENERATIONS] = { 0, };
@@ -16,10 +19,17 @@ int main()
 		pop.run();
 		pop.statistics_info_calc();
 		cout << "<------------" << i << "th iteration------------>" << endl;
+		/*cout << "assignment: " << endl;
+		
+		for (int j = 0; j < K; j++)
+		{
+			cout << assignment[j] << endl;
+		}
+		cout << endl;*/
 		//pop.print_population(MODE_DETAIL);
+		pop.print_best_assignment();
 	}
 	cout << "<------------Result------------>" << endl;
-	
 
 /*	
 	for (int i = 0; i < GENERATIONS ; i++)
@@ -31,7 +41,9 @@ int main()
 		}
 	}
 */	
+	/*요기*/
 
+	cout << "----------적합도-----------" << endl;
 	for (int i = 0; i < GENERATIONS; i++)
 	{
 		avg_best_fiteness[i] = sum_best_fiteness[i] / ITERATION;
@@ -46,8 +58,6 @@ int main()
 			cout << avg_best_fiteness[i] << " " << std_best_fiteness[i] << endl;
 		}
 	}
-
-	previous_assignment_eval();
 
 	//Random
 	/*
@@ -69,9 +79,11 @@ int main()
 	for (int i = 0; i < ITERATION; i++)
 	{
 		cout << random_gene_best_fitness[i] << endl;
-	}
-	int temp;
-	cin >> temp;*/
+	}//요기 밑에 풀기*/
+	end = clock();
+	cout << "수행시간 : " << (end - begin) << endl;
+	
+	
 }
 
 

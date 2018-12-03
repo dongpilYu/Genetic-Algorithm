@@ -8,12 +8,16 @@ const int LB = 1;
 const int ITERATION = 10;
 const int KEEP = 3;
 const int TIME_LIMIT = 72;
+const int MIN_ASN = 100;
+const int MAX_ASN = 5000;
+const int PENALTY_1DAY = 5, PENALTY_2DAY = 10, PENALTY_EXCESS = 20;
 const int MODE_BRIEF = 0, MODE_DETAIL = 1, MODE_TEST = 2;
 const int MODE_C_ERROR = 0, MODE_R_ERROR = 1, MODE_RANGE_ERROR = 2;
 const int FLAG_SHORTAGE = 0, FLAG_SAME = 1, FLAG_EXCESS = 2;
 const int NON_ESCAPABLE = 0, ESCAPABLE = 1;
 const double CROSSOVER_RATE = 0.7;
 const double MUTATION_RATE = 0.001;
+const double RAND_PERCENTAGE = 0.3;
 static const int GENERATIONS = 1000;
 
 #endif 
