@@ -23,13 +23,13 @@ namespace util {
 
 
 namespace constant {
-	const int T_0 = 8;
+	const int T_0 = 8; //원래 8시 시작
 	const int T_w_0 = 8;
 	const int T_w = 10;
 
 	const double alpha = 0.2;
 	const double beta = 1 / 3.0;
-	const double gamma = 0.8;
+	const double gamma = 1; 
 
 	/*
 	const util::matrix<int, K, K> D = {
@@ -87,7 +87,7 @@ namespace sim {
 	 *  4:목포,    5:완도,  6:여수,  7:제주,
 	 *  8:서귀포,  9:통영, 10:창원, 11:부산,
 	 * 12:울산,   13:포항, 14:동해, 15:속초
-	 */
+	 
 	constexpr int S = 16; // # of simulation
 	const std::array<int, S> SCENARIO = {
 		8500,  1200, 45000, 3800,
@@ -95,13 +95,33 @@ namespace sim {
 		500,   1700,  1200, 2500,
 		45000,  800,   500,   50
 	};
+*/
+	constexpr int S = 16; // # of simulation
+	const std::array<int, S> SCENARIO = {
+		8500,
+		1200,
+		45000,
+		3800,
+		8500,
+		600,
+		45000,
+		800,
+		500,
+		1700,
+		1200,
+		2500,
+		45000,
+		800,
+		500,
+		50
 
+	};
 
 	/*
 	 * Maritime Equipment(해상 장비)
 	 * Ground Equipment(육상 장비?)
 	 * Oil-skimmer(유회수기)
-	 */
+	*/
 	constexpr int cur_mar_skimmer[S][1] = {
 		569, 814, 594, 600,
 		739, 220, 1667, 305,
@@ -113,7 +133,7 @@ namespace sim {
 		128, 95, 955, 209,
 		414, 630, 314, 472,
 		1341, 286, 243, 45
-	};
+	}; 
 
 	constexpr double alpha = 0.2;  // 효율계수
 	constexpr double beta = 1.0 / 3; // 동원률
