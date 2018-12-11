@@ -19,10 +19,10 @@ int util::h(int t)
 		return std::min(constant::T_w, t - constant::T_w_0);
 	}
 	else if (t < constant::T_w_0) {
-		return h(t + 24) - 10;
+		return h(t + 24) - constant::T_w;
 	}
 	else
-		return h(t - 24) + 10;
+		return h(t - 24) + constant::T_w;
 }
 
 int util::g(int t1, int t2)
@@ -37,7 +37,7 @@ util::matrix<double, K, K> util::D2T(util::matrix<int, K, K> D, int speed)
 	
 	for (size_t i = 0; i < K; i++)
 		for (size_t j = 0; j < K; j++)
-			T[i][j] = D[i][j] / static_cast<double>(speed);
+			T[i][j] = std::ceil(D[i][j] / static_cast<double>(speed));
 
 	return T;
 }
@@ -66,14 +66,14 @@ void sim::simple_simulation(const int data[M][K], double (&time)[S])
     return ;
 }
 
-void sim::simulation(const int data[M][K], double(&time)[S])
+void sim::simulation(const int data[M][K], double(&time)[S], const int T_0, const int ship_speed)
 {
 	using util::g;
 	using util::h;
 	using util::D2T;
 
 	int tick_count;
-	auto T = D2T(constant::D, constant::ship_speed);
+	auto T = D2T(constant::D, ship_speed);
 
 	for (size_t i = 0; i < S; i++)
 	{
@@ -84,7 +84,7 @@ void sim::simulation(const int data[M][K], double(&time)[S])
 		std::array<int, K> work_times;
 		// get work_times
 		for (size_t j = 0; j < K; j++) {
-			work_times[j] = -g(T[i][j], constant::T_0 + T[i][i]);
+			work_times[j] = -g(T[i][j], T_0 + T[i][i]);
 		}
 
 		while (true) {
