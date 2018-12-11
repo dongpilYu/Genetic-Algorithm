@@ -174,7 +174,7 @@ namespace sim {
 	 */
 	void simple_simulation(const int data[M][K], double(&time)[S]);
 
-	void simulation(const int data[M][K], double(&time)[S], const int ship_speed=10);
+	void simulation(const int data[M][K], double(&time)[S], const int T_0=8, const int ship_speed=10);
 
 }
 #endif /* SIMULATION_H */

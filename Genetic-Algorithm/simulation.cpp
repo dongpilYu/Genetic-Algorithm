@@ -66,7 +66,7 @@ void sim::simple_simulation(const int data[M][K], double (&time)[S])
     return ;
 }
 
-void sim::simulation(const int data[M][K], double(&time)[S], const int ship_speed)
+void sim::simulation(const int data[M][K], double(&time)[S], const int T_0, const int ship_speed)
 {
 	using util::g;
 	using util::h;
@@ -84,7 +84,7 @@ void sim::simulation(const int data[M][K], double(&time)[S], const int ship_spee
 		std::array<int, K> work_times;
 		// get work_times
 		for (size_t j = 0; j < K; j++) {
-			work_times[j] = -g(T[i][j], constant::T_0 + T[i][i]);
+			work_times[j] = -g(T[i][j], T_0 + T[i][i]);
 		}
 
 		while (true) {
