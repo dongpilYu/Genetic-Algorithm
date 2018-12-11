@@ -23,13 +23,13 @@ namespace util {
 
 
 namespace constant {
-	const int T_0 = 8;
+	const int T_0 = 12; // 사건 발생시간
 	const int T_w_0 = 8;
-	const int T_w = 10;
+	const int T_w = 8;
 
 	const double alpha = 0.2;
 	const double beta = 1 / 3.0;
-	const double gamma = 0.8;
+	const double gamma = 1;
 
 	/*
 	const util::matrix<int, K, K> D = {
@@ -174,7 +174,7 @@ namespace sim {
 	 */
 	void simple_simulation(const int data[M][K], double(&time)[S]);
 
-	void simulation(const int data[M][K], double(&time)[S]);
+	void simulation(const int data[M][K], double(&time)[S], const int ship_speed=10);
 
 }
 #endif /* SIMULATION_H */
