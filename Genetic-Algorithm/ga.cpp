@@ -11,10 +11,19 @@ int assignment[K] = { 0, };
 int iteration_num = 0;
 
 int SCENARIO[S] = {
-	8500,  1200, 45000, 3800,
-	8500,   600, 45000,  800,
-	500,   1700,  1200, 2500,
-	45000,  800,   500,   50
+	8500,
+	45000,
+	3800,
+	8500,
+	600,
+	45000,
+	800,
+	1600,
+	2300,
+	45000,
+	800,
+	500
+
 };
 
 /*
@@ -32,11 +41,25 @@ Chromosome::Chromosome()
 			rand_binary = rand() % 2;
 			if (rand_binary == 0)
 			{
-				data[row][col] = C[col] + rand() % (int)(C[col] * RAND_PERCENTAGE);
+				if (C[col] == 0)
+				{
+					data[row][col] = MIN_ASN + rand() % (int)(MIN_ASN * RAND_PERCENTAGE);
+				}
+				else
+				{
+					data[row][col] = C[col] + rand() % (int)(C[col] * RAND_PERCENTAGE);
+				}
 			}
 			else
 			{
-				data[row][col] = C[col] - rand() % (int)(C[col] * RAND_PERCENTAGE);
+				if (C[col] == 0)
+				{
+					data[row][col] = MIN_ASN - rand() % (int)(MIN_ASN * RAND_PERCENTAGE);
+				}
+				else
+				{
+					data[row][col] = C[col] - rand() % (int)(C[col] * RAND_PERCENTAGE);
+				}
 			}
 		}
 	}
@@ -168,13 +191,22 @@ void Chromosome::repair()
 			
 			for (int i = 0; i < col; i++)
 			{
-				data[0][i] += excess_value;
+				if (data[0][i] < 5000)
+				{
+					data[0][i] += excess_value;
+				}
 			}
 			data[0][col] = MAX_ASN;
 			for (int i = col+1; i < K; i++)
 			{
-				data[0][i] += excess_value;
+				if(data[0][i] < 5000)
+				{
+					data[0][i] += excess_value;
+				}
 			}
+			cumulative_sum_calc();
+			assert_feasible(MODE_C_ERROR);
+			assert_feasible(MODE_R_ERROR);
 		}
 	}
 
@@ -311,8 +343,8 @@ void Chromosome::assert_feasible(int mode)
 		{
 			if (column_sum[col] > MAX_ASN)
 			{
-				cout << "Repair Error in constraint C" << endl;
-				//repair();
+				//cout << "Repair Error in constraint C" << endl;
+				repair();
 			}
 
 		}
@@ -323,7 +355,7 @@ void Chromosome::assert_feasible(int mode)
 		{
 			if (row_sum[row] != R[row])
 			{
-				cout << "Repair Error in constraint R" << endl;
+				//cout << "Repair Error in constraint R" << endl;
 				repair();
 			}
 		}
@@ -663,7 +695,7 @@ Post: Parameters used as constraints are set
 void set_input_parameters()
 {
 	vector<int> numbers;
-	ifstream inputFile1("input_test.txt");
+	ifstream inputFile1("input_report.txt");
 
 	if (inputFile1.good()) {
 		int current_number = 0;

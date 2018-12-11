@@ -82,8 +82,9 @@ int main()
 	}//요기 밑에 풀기*/
 	end = clock();
 	cout << "수행시간 : " << (end - begin) << endl;
-	
-	
+	cout << "analysis of previous assignment" << endl;
+	int pre_asn[K] = { 2833, 0, 3400,  1267, 2833, 200, 4200, 267, 0, 533, 0, 833, 5700, 267, 167, 0 };
+	assignment_eval(pre_asn);
 }
 
 
