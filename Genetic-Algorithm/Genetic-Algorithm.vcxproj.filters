@@ -50,6 +50,9 @@
     <Text Include="input4.txt">
       <Filter>리소스 파일\Inputs</Filter>
     </Text>
+    <Text Include="input_report.txt">
+      <Filter>리소스 파일\Inputs</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ga.h">

@@ -26,6 +26,43 @@ int SCENARIO[S] = {
 
 };
 
+int MAXIMUM[K] = {
+	1772,
+	250,
+	9375,
+	792,
+	1772,
+	125,
+	9375,
+	167,
+	105,
+	355,
+	250,
+	522,
+	9375,
+	167,
+	105,
+	11
+};
+
+int MINIMUM[K] = {
+	11,
+	11,
+	11,
+	11,
+	11,
+	11,
+	11,
+	11,
+	10,
+	11,
+	11,
+	11,
+	11,
+	11,
+	10,
+	1
+};
 /*
 Post: Randomly generates data within range
 */
@@ -36,8 +73,11 @@ Chromosome::Chromosome()
 	for (int row = 0; row < M; row++) {
 		for (int col = 0; col < K; col++)
 		{
+			data[row][col] = rand() % MAXIMUM[col];
 			//data[row][col] = (rand() % ((int)(2 * (double)R[row] / K) - LB + 1)) + LB;
 			//data[row][col] = C[col] + rand() % (int)(C[col] * RAND_PERCENTAGE);
+
+			/* original max contraint
 			rand_binary = rand() % 2;
 			if (rand_binary == 0)
 			{
@@ -60,7 +100,7 @@ Chromosome::Chromosome()
 				{
 					data[row][col] = C[col] - rand() % (int)(C[col] * RAND_PERCENTAGE);
 				}
-			}
+			}*/
 		}
 	}
 	cumulative_sum_calc();
@@ -162,15 +202,21 @@ void Chromosome::repair()
 		{
 			if (row_sum[row] < R[row])
 			{
-				data[row][rand() % K]++;
+				int rand_col = rand() % K;
+				while (data[row][rand_col] > MAXIMUM[rand_col] - 1)
+				{
+					rand_col = rand() % K;
+				}
+				data[row][rand_col]++;
+
 			}
 			else if (row_sum[row] > R[row])
 			{
-				int rand_row = rand() % K;
+				int rand_col = rand() % K;
 
-				if (data[row][rand_row] > MIN_ASN)
+				if (data[row][rand_col] > MINIMUM[rand_col])
 				{
-					data[row][rand_row]--;
+					data[row][rand_col]--;
 				}
 			}
 			cumulative_sum_calc();				//for debug
@@ -178,28 +224,28 @@ void Chromosome::repair()
 	}
 	assert_feasible(MODE_R_ERROR);
 
-	//print_chromo();
 	//cout << "Constraint R is done" << endl;
+	//print_chromo();
 
 	/*max constraint*/
 	for (int col = 0; col < K; col++)
 	{
-		if (data[0][col] > MAX_ASN)
+		if (data[0][col] > MAXIMUM[col])
 		{
 			int excess_value = 0;
-			excess_value = (data[0][col] - MAX_ASN) / (K - 1);
+			excess_value = (data[0][col] - MAXIMUM[col]) / (K - 1);
 			
 			for (int i = 0; i < col; i++)
 			{
-				if (data[0][i] < 5000)
+				if ((data[0][i] + excess_value) < MAXIMUM[i])
 				{
 					data[0][i] += excess_value;
 				}
 			}
-			data[0][col] = MAX_ASN;
+			data[0][col] = MAXIMUM[col];
 			for (int i = col+1; i < K; i++)
 			{
-				if(data[0][i] < 5000)
+				if((data[0][i] + excess_value) < MAXIMUM[i])
 				{
 					data[0][i] += excess_value;
 				}
@@ -220,7 +266,7 @@ void Chromosome::repair()
 		if (count > 1000000)  //임시코드
 		{
 			cout << "Repair count over" << endl;
-			print_chromo();
+			//print_chromo();
 			cout << "Column Sum" << endl;
 			for (int col = 0; col < K; col++)
 			{
@@ -237,10 +283,16 @@ void Chromosome::repair()
 		}
 		for (int col = 0; col < K; col++) //flag check, 원래는 MAX_ASN이 C[col]
 		{
-			if (column_sum[col] > MAX_ASN) flag_arr[col] = FLAG_EXCESS;
-			else if (column_sum[col] < MAX_ASN) flag_arr[col] = FLAG_SHORTAGE;
+			if (column_sum[col] > MAXIMUM[col]) flag_arr[col] = FLAG_EXCESS;
+			else if (column_sum[col] < MAXIMUM[col]) flag_arr[col] = FLAG_SHORTAGE;
 			else flag_arr[col] = FLAG_SAME;
 		}
+
+		for (int i = 0; i < K; i++)
+		{
+			cout << flag_arr[i] << " ";
+		}
+		cout << "\n";
 
 		//Escape examination
 		bool flag_escape = ESCAPABLE;
@@ -287,7 +339,7 @@ void Chromosome::repair()
 			old_excess_data = data[rand_row][excess_col];
 			old_shortage_data = data[rand_row][shortage_col];
 
-			if ((data[rand_row][shortage_col] < KEEP + LB) && (data[rand_row][excess_col] >= KEEP + LB))
+			if ((data[rand_row][shortage_col] < KEEP + LB) && (data[rand_row][excess_col] >= KEEP + LB)) 
 			{
 				//cout << "old shortage col is " << data[rand_row][shortage_col] << " and excess col is " << data[rand_row][excess_col] << endl;
 
@@ -306,6 +358,7 @@ void Chromosome::repair()
 			}
 
 			//If the if statement does not swap properly
+			
 			if ((old_excess_data == data[rand_row][excess_col]) && (old_shortage_data == data[rand_row][shortage_col]))
 			{
 				int temp = 0;
@@ -328,7 +381,7 @@ void Chromosome::assert_feasible(int mode)
 	for (int row = 0; row < M; row++) {
 		for (int col = 0; col < K; col++)
 		{
-			if (data[row][col] < MIN_ASN) //원래는 LB였음
+			if (data[row][col] < MINIMUM[col]) //원래는 LB였음
 			{
 				//cout << "Repaired less than LB" << endl;
 				data[row][col]++;
@@ -341,7 +394,7 @@ void Chromosome::assert_feasible(int mode)
 	{
 		for (int col = 0; col < K; col++)
 		{
-			if (column_sum[col] > MAX_ASN)
+			if (column_sum[col] > MAXIMUM[col])
 			{
 				//cout << "Repair Error in constraint C" << endl;
 				repair();
@@ -828,7 +881,7 @@ void assignment_eval(int assignment[K])
 
 		eval_basic_sum += basic_prod;
 		eval_weight_sum += weight_prod;
-		cout << time[i] << endl;
+		cout << time[i]*8 << endl;
 	}
 	basic_fitness = eval_basic_sum / 165650;
 	time_weight_fitness = eval_weight_sum / 165650;
